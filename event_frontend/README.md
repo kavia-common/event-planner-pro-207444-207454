@@ -2,6 +2,32 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.1.
 
+## API Base URL configuration (NG_APP_API_BASE)
+
+The frontend reads the backend API base URL from `NG_APP_API_BASE` using the following priority order:
+
+1. `window.__RUNTIME_CONFIG__.NG_APP_API_BASE` (runtime; **no rebuild required**)
+2. `process.env.NG_APP_API_BASE` (SSR/build-time injection, depending on the platform)
+3. Default fallback:
+   - **Development/preview:** `http://localhost:3001` (FastAPI backend port)
+   - **Production:** `/api` (typical reverse-proxy)
+
+### Runtime override (recommended)
+
+`src/index.html` loads:
+
+- `public/assets/runtime-config.js` → served as `/assets/runtime-config.js`
+
+This file sets `window.__RUNTIME_CONFIG__.NG_APP_API_BASE`. Hosting environments can replace or rewrite this single static file to point at a different API origin without rebuilding the Angular bundle.
+
+To use same-origin proxying, set:
+
+- `NG_APP_API_BASE="/api"`
+
+To directly call a backend origin, set:
+
+- `NG_APP_API_BASE="http://localhost:3001"` (requested preview default)
+
 ## Development server
 
 To start a local development server, run:
@@ -10,7 +36,7 @@ To start a local development server, run:
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+In this repository's preview setup, the Angular dev server is typically exposed on port 3000.
 
 ## Code scaffolding
 
