@@ -1,0 +1,37 @@
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand__title">Event Planner Pro</div>
+      <div class="brand__badge">
+        <span>RETRO</span>
+        <span class="muted">v0</span>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <nav class="nav" aria-label="Primary navigation">
+      <a routerLink="/events" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <span>Events</span><span class="muted">E</span>
+      </a>
+      <a routerLink="/events/new" routerLinkActive="active">
+        <span>Create Event</span><span class="muted">N</span>
+      </a>
+      <a routerLink="/calendar" routerLinkActive="active">
+        <span>Calendar</span><span class="muted">C</span>
+      </a>
+    </nav>
+
+    <div style="margin-top: 18px" class="card card--tight">
+      <div class="muted" style="font-family: var(--mono); font-size: 12px; line-height: 1.5">
+        Tips:
+        <div style="margin-top: 6px">• Use <span class="kbd">Events</span> to manage your list.</div>
+        <div>• Open an event to manage RSVPs.</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <router-outlet></router-outlet>
+  </main>
+</div>

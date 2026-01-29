@@ -1,0 +1,53 @@
+<section class="page">
+  <header class="page__header">
+    <div>
+      <div class="h1">Events</div>
+      <div class="muted" style="margin-top: 6px">Browse, open, and edit your events.</div>
+    </div>
+
+    <div class="btn-row">
+      <a class="btn btn--primary" routerLink="/events/new">+ New Event</a>
+      <button class="btn" type="button" (click)="refresh()" [disabled]="loading">Refresh</button>
+    </div>
+  </header>
+
+  <div *ngIf="error" class="banner">{{ error }}</div>
+
+  <div class="card" *ngIf="loading">Loading events…</div>
+
+  <div class="card" *ngIf="!loading && events.length === 0 && !error">
+    <div class="muted">No events yet. Create your first one.</div>
+  </div>
+
+  <div class="card" *ngIf="!loading && events.length > 0">
+    <table class="table" aria-label="Event list">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>When</th>
+          <th>Location</th>
+          <th style="width: 220px">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let e of events">
+          <td>
+            <a [routerLink]="['/events', e.id]">{{ e.title }}</a>
+          </td>
+          <td>
+            <span class="pill">
+              {{ e.start_at | date: 'MMM d, y, h:mm a' }} → {{ e.end_at | date: 'h:mm a' }}
+            </span>
+          </td>
+          <td class="muted">{{ e.location || '—' }}</td>
+          <td>
+            <div class="btn-row">
+              <a class="btn" [routerLink]="['/events', e.id]">Details</a>
+              <a class="btn" [routerLink]="['/events', e.id, 'edit']">Edit</a>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

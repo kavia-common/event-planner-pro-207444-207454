@@ -1,0 +1,108 @@
+<section class="page">
+  <header class="page__header">
+    <div>
+      <div class="h1">Event Details</div>
+      <div class="muted" style="margin-top: 6px">View details and manage RSVPs.</div>
+    </div>
+
+    <div class="btn-row">
+      <a class="btn btn--ghost" routerLink="/events">← Back</a>
+      <a class="btn" [routerLink]="['/events', eventId, 'edit']">Edit</a>
+    </div>
+  </header>
+
+  <div *ngIf="error" class="banner">{{ error }}</div>
+  <div class="card" *ngIf="loading">Loading…</div>
+
+  <div class="card" *ngIf="!loading && event">
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap">
+        <div style="font-size: 20px; font-weight: 700">{{ event.title }}</div>
+        <span class="pill">
+          {{ event.start_at | date: 'MMM d, y, h:mm a' }} → {{ event.end_at | date: 'h:mm a' }}
+        </span>
+      </div>
+
+      <div class="muted" *ngIf="event.location">Location: {{ event.location }}</div>
+      <div *ngIf="event.description">{{ event.description }}</div>
+      <div class="muted" *ngIf="!event.description">No description.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap">
+      <div style="font-size: 16px; font-weight: 700">RSVPs</div>
+      <span class="pill">{{ rsvps.length }} total</span>
+    </div>
+
+    <div *ngIf="rsvpError" class="banner" style="margin-top: 12px">{{ rsvpError }}</div>
+
+    <form class="form" style="margin-top: 12px" (ngSubmit)="submitRsvp()">
+      <div class="grid-2">
+        <div class="field">
+          <div class="label">Attendee name</div>
+          <input class="control" type="text" [formControl]="rsvpForm.controls.attendee_name" placeholder="Ada Lovelace" />
+          <div class="error" *ngIf="rsvpForm.controls.attendee_name.touched && rsvpForm.controls.attendee_name.invalid">
+            Name is required.
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="label">Attendee email</div>
+          <input class="control" type="email" [formControl]="rsvpForm.controls.attendee_email" placeholder="ada@example.com" />
+          <div class="help">Optional</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="label">Status</div>
+        <select class="control" [formControl]="rsvpForm.controls.status">
+          <option value="going">Going</option>
+          <option value="maybe">Maybe</option>
+          <option value="not_going">Not going</option>
+        </select>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn--primary" type="button" (click)="submitRsvp()" [disabled]="rsvpLoading">
+          {{ editingRsvpId ? (rsvpLoading ? 'Saving…' : 'Update RSVP') : (rsvpLoading ? 'Saving…' : 'Add RSVP') }}
+        </button>
+        <button class="btn" type="button" (click)="cancelEdit()" [disabled]="rsvpLoading" *ngIf="editingRsvpId">
+          Cancel
+        </button>
+      </div>
+    </form>
+
+    <div class="hr" style="margin: 14px 0"></div>
+
+    <div class="muted" *ngIf="rsvps.length === 0">No RSVPs yet.</div>
+
+    <table class="table" *ngIf="rsvps.length > 0" aria-label="RSVP list">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Status</th>
+          <th style="width: 220px">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of rsvps">
+          <td>{{ r.attendee_name }}</td>
+          <td class="muted">{{ r.attendee_email || '—' }}</td>
+          <td>
+            <span class="pill">{{ statusLabel(r.status) }}</span>
+          </td>
+          <td>
+            <div class="btn-row">
+              <button class="btn" type="button" (click)="startEdit(r)" [disabled]="rsvpLoading">Edit</button>
+              <button class="btn btn--danger" type="button" (click)="deleteRsvp(r)" [disabled]="rsvpLoading">
+                Delete
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

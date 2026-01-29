@@ -1,0 +1,67 @@
+<section class="page">
+  <header class="page__header">
+    <div>
+      <div class="h1">{{ isEdit ? 'Edit Event' : 'Create Event' }}</div>
+      <div class="muted" style="margin-top: 6px">
+        {{ isEdit ? 'Update details and save changes.' : 'Fill in details to create a new event.' }}
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <a class="btn btn--ghost" routerLink="/events">← Back</a>
+      <button class="btn btn--primary" type="button" (click)="save()" [disabled]="saving || loading">
+        {{ saving ? 'Saving…' : 'Save' }}
+      </button>
+    </div>
+  </header>
+
+  <div *ngIf="error" class="banner">{{ error }}</div>
+  <div class="card" *ngIf="loading">Loading event…</div>
+
+  <form class="card form" *ngIf="!loading" (ngSubmit)="save()">
+    <div class="grid-2">
+      <div class="field">
+        <div class="label">Title</div>
+        <input class="control" type="text" [formControl]="form.controls.title" placeholder="Retro Meetup" />
+        <div class="error" *ngIf="form.controls.title.touched && form.controls.title.invalid">
+          Title is required.
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="label">Location</div>
+        <input class="control" type="text" [formControl]="form.controls.location" placeholder="Arcade Hall" />
+        <div class="help">Optional</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="label">Description</div>
+      <textarea
+        class="control"
+        rows="4"
+        [formControl]="form.controls.description"
+        placeholder="What is this event about?"
+      ></textarea>
+      <div class="help">Optional</div>
+    </div>
+
+    <div class="grid-2">
+      <div class="field">
+        <div class="label">Start</div>
+        <input class="control" type="datetime-local" [formControl]="form.controls.start_at" />
+        <div class="error" *ngIf="form.controls.start_at.touched && form.controls.start_at.invalid">
+          Start time is required.
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="label">End</div>
+        <input class="control" type="datetime-local" [formControl]="form.controls.end_at" />
+        <div class="error" *ngIf="form.controls.end_at.touched && form.controls.end_at.invalid">
+          End time is required.
+        </div>
+      </div>
+    </div>
+  </form>
+</section>

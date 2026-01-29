@@ -1,0 +1,104 @@
+<section class="page">
+  <header class="page__header">
+    <div>
+      <div class="h1">Calendar</div>
+      <div class="muted" style="margin-top: 6px">Month / Week / Day views (derived from event start times).</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" type="button" (click)="prev()">←</button>
+      <button class="btn" type="button" (click)="today()">Today</button>
+      <button class="btn" type="button" (click)="next()">→</button>
+      <span class="pill">{{ title }}</span>
+    </div>
+  </header>
+
+  <div class="card">
+    <div class="btn-row" style="justify-content: space-between">
+      <div class="btn-row">
+        <button class="btn" type="button" (click)="setMode('month')" [class.btn--primary]="mode === 'month'">Month</button>
+        <button class="btn" type="button" (click)="setMode('week')" [class.btn--primary]="mode === 'week'">Week</button>
+        <button class="btn" type="button" (click)="setMode('day')" [class.btn--primary]="mode === 'day'">Day</button>
+      </div>
+      <button class="btn" type="button" (click)="refresh()" [disabled]="loading">Refresh</button>
+    </div>
+
+    <div *ngIf="error" class="banner" style="margin-top: 12px">{{ error }}</div>
+    <div *ngIf="loading" class="muted" style="margin-top: 12px">Loading…</div>
+
+    <!-- Month -->
+    <div *ngIf="!loading && mode === 'month'" style="margin-top: 14px">
+      <div class="grid-2" style="grid-template-columns: repeat(7, 1fr); gap: 10px">
+        <div class="muted" style="font-family: var(--mono); font-size: 12px" *ngFor="let d of ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']">
+          {{ d }}
+        </div>
+        <div
+          *ngFor="let day of monthGridDays"
+          class="card card--tight"
+          style="min-height: 110px; padding: 10px"
+        >
+          <div class="muted" style="font-family: var(--mono); font-size: 12px">
+            {{ day | date: 'MMM d' }}
+          </div>
+
+          <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px">
+            <a
+              *ngFor="let e of eventsForDay(day) | slice:0:3"
+              class="pill"
+              [routerLink]="['/events', e.id]"
+              style="justify-content: space-between"
+            >
+              <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 160px">
+                {{ e.title }}
+              </span>
+              <span class="muted">{{ e.start_at | date: 'h:mm a' }}</span>
+            </a>
+            <div class="muted" *ngIf="eventsForDay(day).length > 3" style="font-size: 12px">
+              +{{ eventsForDay(day).length - 3 }} more…
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Week -->
+    <div *ngIf="!loading && mode === 'week'" style="margin-top: 14px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px">
+      <div *ngFor="let day of weekDays" class="card card--tight">
+        <div style="display: flex; justify-content: space-between; gap: 10px">
+          <div style="font-weight: 700">{{ day | date: 'EEE' }}</div>
+          <div class="muted" style="font-family: var(--mono); font-size: 12px">{{ day | date: 'MMM d' }}</div>
+        </div>
+
+        <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px">
+          <a *ngFor="let e of eventsForDay(day)" class="pill" [routerLink]="['/events', e.id]" style="justify-content: space-between">
+            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px">
+              {{ e.title }}
+            </span>
+            <span class="muted">{{ e.start_at | date: 'h:mm a' }}</span>
+          </a>
+          <div class="muted" *ngIf="eventsForDay(day).length === 0" style="font-size: 12px">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day -->
+    <div *ngIf="!loading && mode === 'day'" style="margin-top: 14px" class="card card--tight">
+      <div style="display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap">
+        <div style="font-weight: 700">{{ anchor | date: 'fullDate' }}</div>
+        <span class="pill">{{ eventsForDay(anchor).length }} event(s)</span>
+      </div>
+
+      <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 10px">
+        <div class="muted" *ngIf="eventsForDay(anchor).length === 0">No events on this day.</div>
+
+        <div *ngFor="let e of eventsForDay(anchor)" class="card card--tight">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap">
+            <a [routerLink]="['/events', e.id]" style="font-weight: 700">{{ e.title }}</a>
+            <span class="pill">{{ e.start_at | date: 'h:mm a' }} → {{ e.end_at | date: 'h:mm a' }}</span>
+          </div>
+          <div class="muted" style="margin-top: 6px" *ngIf="e.location">Location: {{ e.location }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
